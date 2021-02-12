@@ -18,11 +18,8 @@ public class MoviesController {
     @RequestMapping("/movies")
     public String find(@RequestParam(value = "year", required = false) Integer year,
                        @RequestParam(value = "month", required = false) Month month) {
-        // TODO: Replace with a Java stream
         StringBuilder sb = new StringBuilder();
-        for (Movie movie : moviesService.findAll()) {
-            sb.append(movie.getTitle()).append("\n");
-        }
+        moviesService.findAll(year, month).forEach(movie -> sb.append(movie.getTitle()).append("\n"));
         return sb.toString();
     }
 

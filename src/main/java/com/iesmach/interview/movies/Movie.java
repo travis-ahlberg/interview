@@ -24,6 +24,16 @@ public class Movie {
         this.month = released.getMonthValue();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof Movie)) return false;
+        Movie movie = (Movie) o;
+        return  this.title.equals(movie.title) &&
+                this.year == movie.year &&
+                this.month == movie.month;
+    }
+
     public String getTitle() {
         return title;
     }

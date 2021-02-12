@@ -20,41 +20,68 @@ public class MoviesControllerTest {
     private MockMvc mvc;
 
     @Test
-    public void getMovies() throws Exception {
+    public void find_returnsAllMovies() throws Exception {
+
+        // Arrange
+        String expected = "UHF\n" +
+                "Dave\n" +
+                "What About Bob\n" +
+                "Colors\n" +
+                "Short Circuit\n" +
+                "Conan\n" +
+                "Flowers In the Attic\n" +
+                "Mystic Pizza\n" +
+                "North Shore\n" +
+                "Cliff Hanger\n" +
+                "American Tail\n";
+
+        // Act & Assert
         mvc.perform(MockMvcRequestBuilders.get("/movies")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("UHF\n" +
-                        "Dave\n" +
-                        "What About Bob\n" +
-                        "Colors\n" +
-                        "Short Circuit\n" +
-                        "Conan\n" +
-                        "Flowers In the Attic\n" +
-                        "Mystic Pizza\n" +
-                        "North Shore\n" +
-                        "Cliff Hanger\n" +
-                        "American Tail")));
+                .andExpect(content().string(equalTo(expected)));
     }
 
     @Test
-    public void getMoviesReleasedIn1987() throws Exception {
+    public void find_givenYear_returnsFilteredMovies() throws Exception {
+
+        // Arrange
+        String expected = "UHF\n" +
+                "North Shore\n";
+
+        // Act & Assert
         mvc.perform(MockMvcRequestBuilders.get("/movies?year=1987")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("UHF\n" +
-                        "North Shore")));
+                .andExpect(content().string(equalTo(expected)));
     }
 
     @Test
-    public void getMoviesReleasedInMay() throws Exception {
+    public void find_givenMonth_returnsFilteredMovies() throws Exception {
+
+        // Arrange
+        String expected = "What About Bob\n" +
+                "Flowers In the Attic\n" +
+                "Mystic Pizza\n" +
+                "North Shore\n";
+
+        // Act & Assert
         mvc.perform(MockMvcRequestBuilders.get("/movies?month=MAY")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(equalTo("What About Bob\n" +
-                        "Flowers In the Attic\n" +
-                        "Mystic Pizza\n" +
-                        "North Shore")));
+                .andExpect(content().string(equalTo(expected)));
     }
-    
+
+    @Test
+    public void find_givenYearMonth_returnsFilteredMovies() throws Exception {
+
+        // Arrange
+        String expected = "North Shore\n";
+
+        // Act & Assert
+        mvc.perform(MockMvcRequestBuilders.get("/movies?year=1987&month=MAY")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(equalTo(expected)));
+    }
 }

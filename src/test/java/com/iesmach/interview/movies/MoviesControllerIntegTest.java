@@ -30,20 +30,23 @@ public class MoviesControllerIntegTest {
     }
 
     @Test
-    public void testReturnsMovies() throws Exception {
+    public void find_returnsAllMovies() throws Exception {
+
+        // Arrange
+        String expected = "UHF\n" +
+                "Dave\n" +
+                "What About Bob\n" +
+                "Colors\n" +
+                "Short Circuit\n" +
+                "Conan\n" +
+                "Flowers In the Attic\n" +
+                "Mystic Pizza\n" +
+                "North Shore\n" +
+                "Cliff Hanger\n" +
+                "American Tail\n";
+
+        // Act & Assert
         ResponseEntity<String> response = template.getForEntity(base.toString(), String.class);
-        assertThat(response.getBody()).isEqualTo("""
-                UHF
-                Dave
-                What About Bob
-                Colors
-                Short Circuit
-                Conan
-                Flowers In the Attic
-                Mystic Pizza
-                North Shore
-                Cliff Hanger
-                American Tail
-                """);
+        assertThat(response.getBody()).isEqualTo(expected);
     }
 }

@@ -1,13 +1,16 @@
 package com.iesmach.interview.movies;
 
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.Month;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +21,7 @@ import static java.time.Month.JANUARY;
 import static java.time.Month.MARCH;
 import static java.time.Month.MAY;
 
+@Service
 class MoviesServiceImpl implements MoviesService {
 
     private final MovieRepository repository;
@@ -48,15 +52,30 @@ class MoviesServiceImpl implements MoviesService {
     }
 
     @Override
-    public List<Movie> findAll() {
-        return repository.findAll();
+    public List<Movie> findAll(@Nullable Integer year, @Nullable Month month) {
+
+        List<String> ignorePaths = new ArrayList<>();
+        ignorePaths.add("title");
+
+        Movie exampleMovie = new Movie();
+
+        if(year != null) exampleMovie.setYear(year);
+        else ignorePaths.add("year");
+
+        if(month != null) exampleMovie.setMonth(month.getValue());
+        else ignorePaths.add("month");
+
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnorePaths(ignorePaths.toArray(new String[0]));
+        Example<Movie> example = Example.of(exampleMovie, matcher);
+
+        return repository.findAll(example);
     }
 
     @Override
     public Map<Integer, Integer> findCountByReleaseYear() {
         Map<Integer, Integer> result = new HashMap<>();
 
-        jdbcTemplate.query("TODO: Implement this query to return number of movies released by year", (RowCallbackHandler) rs ->
+        jdbcTemplate.query("SELECT year, COUNT(*) FROM Movie GROUP BY year", (RowCallbackHandler) rs ->
                 result.put(rs.getInt(1), rs.getInt(2)));
 
         return result;
